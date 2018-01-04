@@ -243,6 +243,20 @@ module Ransack
         end
       end
 
+      def formatted_values_for_tags_attribute(attr)
+        formatted = casted_values_for_attribute(attr).map do |val|
+          if attr.ransacker && attr.ransacker.formatter
+            val = attr.ransacker.formatter.call(val)
+          end
+          val
+        end
+        if predicate.wants_array
+          formatted
+        else
+          formatted.first
+        end
+      end
+
       def arel_predicate_for_attribute(attr)
         if predicate.arel_predicate === Proc
           values = casted_values_for_attribute(attr)
